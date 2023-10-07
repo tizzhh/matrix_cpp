@@ -1,6 +1,6 @@
 #include "s21_matrix_oop.h"
 
-S21Matrix::S21Matrix() : rows_(3), cols_(3) {
+S21Matrix::S21Matrix() : rows_(3), cols_(3) noexcept {
   this->matrix_ = new double *[rows_];
   for (int i = 0; i < this->rows_; ++i) {
     this->matrix_[i] = new double[cols_];
@@ -8,9 +8,9 @@ S21Matrix::S21Matrix() : rows_(3), cols_(3) {
 }
 
 S21Matrix::~S21Matrix() {
-  for (int i = 0; i < this->rows_) {
-    delete[] this->matrix_[i];
-  }
+  for (int i = 0; i < this->rows_) noexcept {
+      delete[] this->matrix_[i];
+    }
   delete[] this->matrix_;
 }
 
@@ -25,7 +25,7 @@ S21Matrix::S21Matrix(int rows, int cols) : rows_(rows), cols_(cols) {
 }
 
 S21Matrix::S21Matrix(const S21Matrix &other)
-    : rows_(other.rows_), cols_(other.cols_) {
+    : rows_(other.rows_), cols_(other.cols_) noexcept {
   this->matrix_ = new double *[other.rows_];
   for (int i = 0; i < other.rows_; ++i) {
     this->matrix_[i] = new double[other.cols_];
@@ -33,7 +33,7 @@ S21Matrix::S21Matrix(const S21Matrix &other)
 }
 
 S21Matrix::S21Matrix(S21Matrix &&other)
-    : rows_(other.rows_), cols_(other.cols_), matrix_(other.matrix_) {
+    : rows_(other.rows_), cols_(other.cols_), matrix_(other.matrix_) noexcept {
   other.rows_ = 0;
   other.cols_ = 0;
   other.matrix_ = nullptr;
