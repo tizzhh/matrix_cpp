@@ -35,7 +35,7 @@ S21Matrix::S21Matrix(const S21Matrix &other)
 }
 
 S21Matrix::S21Matrix(S21Matrix &&other)
-    : rows_(other.rows_), cols_(other.cols_), matrix_(other.matrix_) {
+    : rows_(other.rows_), cols_(other.cols_), matrix_(other.matrix_) noexcept {
   other.rows_ = 0;
   other.cols_ = 0;
   other.matrix_ = nullptr;
@@ -61,7 +61,7 @@ S21Matrix &S21Matrix::operator=(const S21Matrix &other) {
   return *this;
 }
 
-S21Matrix &S21Matrix::operator=(S21Matrix &&other) {
+S21Matrix &S21Matrix::operator=(S21Matrix &&other) noexcept {
   if (this != &other) {
     for (int i = 0; i < this->rows_; ++i) {
       delete[] this->matrix_[i];
