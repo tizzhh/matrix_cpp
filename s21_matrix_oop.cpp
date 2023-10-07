@@ -28,9 +28,16 @@ S21Matrix::S21Matrix(int rows, int cols) : rows_(rows), cols_(cols) {
 
 S21Matrix::S21Matrix(const S21Matrix &other)
     : rows_(other.rows_), cols_(other.cols_) {
-  this->matrix_ = new double *[other.rows_];
-  for (int i = 0; i < other.rows_; ++i) {
-    this->matrix_[i] = new double[other.cols_];
+  if (other.matrix_ == nullptr) {
+    this->matrix_ = nullptr;
+  } else {
+    this->matrix_ = new double *[other.rows_];
+    for (int i = 0; i < other.rows_; ++i) {
+      this->matrix_[i] = new double[other.cols_];
+      for (int j = 0; j < this->cols_; ++j) {
+        this->matrix_[i][j] = other.matrix_[i][j];
+      }
+    }
   }
 }
 
@@ -50,11 +57,15 @@ S21Matrix &S21Matrix::operator=(const S21Matrix &other) {
 
     this->rows_ = other.rows_;
     this->cols_ = other.cols_;
-    this->matrix_ = new double *[this->rows_];
-    for (int i = 0; i < this->rows_; ++i) {
-      this->matrix_[i] = new double[this->cols_];
-      for (int j = 0; j < this->cols_; ++j) {
-        this->matrix_[i][j] = other.matrix_[i][j];
+    if (other.matrix_ == nullptr) {
+      this->matrix_ = nullptr;
+    } else {
+      this->matrix_ = new double *[this->rows_];
+      for (int i = 0; i < this->rows_; ++i) {
+        this->matrix_[i] = new double[this->cols_];
+        for (int j = 0; j < this->cols_; ++j) {
+          this->matrix_[i][j] = other.matrix_[i][j];
+        }
       }
     }
   }
