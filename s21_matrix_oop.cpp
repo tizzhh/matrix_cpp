@@ -129,7 +129,7 @@ void S21Matrix::SubMatrix(const S21Matrix &other) {
   }
 }
 
-void S21Matrix::MulNumber(const double num) {
+void S21Matrix::MulNumber(const double num) noexcept {
   for (int i = 0; i < this->rows_; ++i) {
     for (int j = 0; j < this->cols_; ++j) {
       this->matrix_[i][j] *= num;
@@ -281,13 +281,13 @@ S21Matrix &S21Matrix::operator*=(const S21Matrix &other) {
   return *this;
 }
 
-S21Matrix S21Matrix::operator*(const double &x) const {
+S21Matrix S21Matrix::operator*(const double &x) const noexcept {
   S21Matrix res(*this);
   res.MulNumber(x);
   return res;
 }
 
-S21Matrix &S21Matrix::operator*=(const double &x) {
+S21Matrix &S21Matrix::operator*=(const double &x) noexcept {
   this->MulNumber(x);
   return *this;
 }
@@ -305,3 +305,11 @@ double &S21Matrix::operator()(const int &i, const int &j) const {
   }
   return this->matrix_[i][j];
 }
+
+int S21Matrix::GetRows() const noexcept { return this->rows_; }
+
+int S21Matrix::GetCols() const noexcept { return this->cols_; }
+
+void S21Matrix::EditRows(const int rows) {}
+
+void S21Matrix::EditCols(const int cols) {}
