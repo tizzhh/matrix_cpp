@@ -247,3 +247,61 @@ void S21Matrix::CreateMinor(const S21Matrix &other, const int i, const int j) {
     if (x != i) ++minorx;
   }
 }
+
+S21Matrix S21Matrix::operator+(const S21Matrix &other) const {
+  S21Matrix res(*this);
+  res.SumMatrix(other);
+  return res;
+}
+
+S21Matrix &S21Matrix::operator+=(const S21Matrix &other) {
+  this->SumMatrix(other);
+  return *this;
+}
+
+S21Matrix S21Matrix::operator-(const S21Matrix &other) const {
+  S21Matrix res(*this);
+  res.SubMatrix(other);
+  return res;
+}
+
+S21Matrix &S21Matrix::operator-=(const S21Matrix &other) {
+  this->SubMatrix(other);
+  return *this;
+}
+
+S21Matrix S21Matrix::operator*(const S21Matrix &other) const {
+  S21Matrix res(*this);
+  res.MulMatrix(other);
+  return res;
+}
+
+S21Matrix &S21Matrix::operator*=(const S21Matrix &other) {
+  this->MulMatrix(other);
+  return *this;
+}
+
+S21Matrix S21Matrix::operator*(const double &x) const {
+  S21Matrix res(*this);
+  res.MulNumber(x);
+  return res;
+}
+
+S21Matrix &S21Matrix::operator*=(const double &x) {
+  this->MulNumber(x);
+  return *this;
+}
+
+bool S21Matrix::operator==(const S21Matrix &other) const {
+  return this->EqMatrix(other);
+}
+
+double &S21Matrix::operator()(const int &i, const int &j) const {
+  if (this->matrix_ == nullptr) {
+    throw std::invalid_argument("invalid matrix");
+  }
+  if (i < 0 || i > this->rows_ || j < 0 || j > cols_) {
+    throw std::invalid_argument("index is outside the matrix");
+  }
+  return this->matrix_[i][j];
+}
