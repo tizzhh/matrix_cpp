@@ -95,9 +95,9 @@ bool S21Matrix::EqMatrix(const S21Matrix &other) const {
   if (this->rows_ != other.rows_ || this->cols_ != other.cols_) return false;
   bool is_equal = true;
 
-  for (int i = 0; i < this->rows_; ++i) {
-    for (int j = 0; j < this->cols_; ++j) {
-      if (std::fabs(this->matrix_[i][j] - other.matrix_[i][j] > s21_ACCURACY)) {
+  for (int i = 0; i < this->rows_ && is_equal; ++i) {
+    for (int j = 0; j < this->cols_ && is_equal; ++j) {
+      if (std::fabs(this->matrix_[i][j] - other.matrix_[i][j]) > s21_ACCURACY) {
         is_equal = false;
       }
     }
@@ -172,7 +172,7 @@ double S21Matrix::Determinant() const {
 
   double result = 1.0;
   int swaps = 0, is_column_zero = 0;
-  S21Matrix temp(this->rows_, this->cols_);
+  S21Matrix temp(*this);
 
   for (int i = 0; i < temp.rows_ - 1 && !is_column_zero; ++i) {
     if (std::fabs(temp.matrix_[i][i]) < s21_ACCURACY) {
@@ -228,7 +228,6 @@ S21Matrix S21Matrix::InverseMatrix() const {
   if (std::fabs(this->Determinant()) < s21_ACCURACY) {
     throw std::logic_error("Determinant is 0");
   }
-
   S21Matrix complements = this->CalcComplements();
   S21Matrix inverse = complements.Transpose();
   inverse.MulNumber(1.0 / this->Determinant());
@@ -349,4 +348,14 @@ void S21Matrix::EditCols(const int cols) {
     }
   }
   *this = std::move(temp);
+}
+
+std::ostream &operator << (std::ostream &out, const S21Matrix &other) {
+  for (int i = 0; i < other.rows_; ++i) {
+    for (int j = 0; j < other.cols_; ++j) {
+      out << other.matrix_[i][j] << " ";   
+    }
+    out << "\n";
+  }
+  return out;
 }
