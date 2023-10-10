@@ -288,6 +288,12 @@ S21Matrix S21Matrix::operator*(const double &x) const noexcept {
   return res;
 }
 
+S21Matrix operator*(const double &x, const S21Matrix &other) {
+  S21Matrix res(other);
+  res.MulNumber(x);
+  return res;
+}
+
 S21Matrix &S21Matrix::operator*=(const double &x) noexcept {
   this->MulNumber(x);
   return *this;
