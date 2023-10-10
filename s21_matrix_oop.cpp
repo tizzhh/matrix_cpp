@@ -97,7 +97,7 @@ bool S21Matrix::EqMatrix(const S21Matrix &other) const {
 
   for (int i = 0; i < this->rows_; ++i) {
     for (int j = 0; j < this->cols_; ++j) {
-      if (std::fabs(this->matrix_[i][j] - other.matrix_[i][j] > ACCURACY)) {
+      if (std::fabs(this->matrix_[i][j] - other.matrix_[i][j] > s21_ACCURACY)) {
         is_equal = false;
       }
     }
@@ -174,9 +174,10 @@ double S21Matrix::Determinant() const {
   S21Matrix temp(this->rows_, this->cols_);
 
   for (int i = 0; i < temp.rows_ - 1 && !is_column_zero; ++i) {
-    if (std::fabs(temp.matrix_[i][i]) < ACCURACY) {
+    if (std::fabs(temp.matrix_[i][i]) < s21_ACCURACY) {
       int j = i + 1;
-      for (; j < temp.rows_ && std::fabs(temp.matrix_[j][i]) < ACCURACY; ++j)
+      for (; j < temp.rows_ && std::fabs(temp.matrix_[j][i]) < s21_ACCURACY;
+           ++j)
         ;
       if (j == temp.rows_) {
         result = 0;

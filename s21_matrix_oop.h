@@ -1,11 +1,11 @@
-#ifndef S21_MATRIX_OOP
+#ifndef S21_MATRIX_OOP  // this needs to be the full path to header file
 #define S21_MATRIX_OPP
 
 #include <cmath>
 #include <iostream>
 #include <stdexcept>
 
-#define ACCURACY 1e-7
+#define s21_ACCURACY 1e-7
 
 class S21Matrix {
  private:
