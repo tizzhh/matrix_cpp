@@ -107,7 +107,7 @@ bool S21Matrix::EqMatrix(const S21Matrix &other) const {
 
 void S21Matrix::SumMatrix(const S21Matrix &other) {
   if (this->rows_ != other.rows_ || this->cols_ != other.cols_) {
-    throw std::invalid_argument("Different matrix dimension");
+    throw std::logic_error("Different matrix dimension");
   }
 
   for (int i = 0; i < this->rows_; ++i) {
@@ -119,7 +119,7 @@ void S21Matrix::SumMatrix(const S21Matrix &other) {
 
 void S21Matrix::SubMatrix(const S21Matrix &other) {
   if (this->rows_ != other.rows_ || this->cols_ != other.cols_) {
-    throw std::invalid_argument("Different matrix dimension");
+    throw std::logic_error("Different matrix dimension");
   }
 
   for (int i = 0; i < this->rows_; ++i) {
@@ -139,7 +139,7 @@ void S21Matrix::MulNumber(const double num) noexcept {
 
 void S21Matrix::MulMatrix(const S21Matrix &other) {
   if (this->cols_ != other.rows_) {
-    throw std::invalid_argument(
+    throw std::logic_error(
         "Matrixes cannot be multiplied due to dimension differences");
   }
 
@@ -153,6 +153,7 @@ void S21Matrix::MulMatrix(const S21Matrix &other) {
 }
 
 S21Matrix S21Matrix::Transpose() const {
+  if (this->matrix_ == nullptr) throw std::invalid_argument("Invalid matrix");
   S21Matrix transposed(this->cols_, this->rows_);
 
   for (int i = 0; i < this->rows_; ++i) {
@@ -166,7 +167,7 @@ S21Matrix S21Matrix::Transpose() const {
 
 double S21Matrix::Determinant() const {
   if (this->rows_ != this->cols_) {
-    throw std::invalid_argument("Matrix is not square");
+    throw std::logic_error("Matrix is not square");
   }
 
   double result = 1.0;
@@ -177,8 +178,8 @@ double S21Matrix::Determinant() const {
     if (std::fabs(temp.matrix_[i][i]) < s21_ACCURACY) {
       int j = i + 1;
       for (; j < temp.rows_ && std::fabs(temp.matrix_[j][i]) < s21_ACCURACY;
-           ++j)
-        ;
+           ++j) {
+      }
       if (j == temp.rows_) {
         result = 0;
         is_column_zero = 1;
@@ -206,7 +207,7 @@ double S21Matrix::Determinant() const {
 
 S21Matrix S21Matrix::CalcComplements() const {
   if (this->rows_ != this->cols_) {
-    throw std::invalid_argument("Matrix is not square");
+    throw std::logic_error("Matrix is not square");
   }
 
   S21Matrix complements(this->rows_, this->cols_);
@@ -224,8 +225,8 @@ S21Matrix S21Matrix::CalcComplements() const {
 }
 
 S21Matrix S21Matrix::InverseMatrix() const {
-  if (this->Determinant() == 0) {
-    throw std::invalid_argument("Determinant is 0");
+  if (std::fabs(this->Determinant()) < s21_ACCURACY) {
+    throw std::logic_error("Determinant is 0");
   }
 
   S21Matrix complements = this->CalcComplements();
@@ -296,12 +297,22 @@ bool S21Matrix::operator==(const S21Matrix &other) const {
   return this->EqMatrix(other);
 }
 
-double &S21Matrix::operator()(const int &i, const int &j) const {
+double &S21Matrix::operator()(const int &i, const int &j) {
   if (this->matrix_ == nullptr) {
-    throw std::invalid_argument("invalid matrix");
+    throw std::invalid_argument("Invalid matrix");
   }
   if (i < 0 || i > this->rows_ || j < 0 || j > cols_) {
-    throw std::invalid_argument("index is outside the matrix");
+    throw std::out_of_range("Index is outside the matrix");
+  }
+  return this->matrix_[i][j];
+}
+
+const double &S21Matrix::operator()(const int &i, const int &j) const {
+  if (this->matrix_ == nullptr) {
+    throw std::invalid_argument("Invalid matrix");
+  }
+  if (i < 0 || i > this->rows_ || j < 0 || j > cols_) {
+    throw std::out_of_range("Index is outside the matrix");
   }
   return this->matrix_[i][j];
 }
@@ -310,6 +321,26 @@ int S21Matrix::GetRows() const noexcept { return this->rows_; }
 
 int S21Matrix::GetCols() const noexcept { return this->cols_; }
 
-void S21Matrix::EditRows(const int rows) {}
+void S21Matrix::EditRows(const int rows) {
+  if (rows < 0) throw std::invalid_argument("Invalid rows");
+  S21Matrix temp(rows, this->cols_);
+  int min_rows = (this->rows_ < rows) ? this->rows_ : rows;
+  for (int i = 0; i < min_rows; ++i) {
+    for (int j = 0; j < this->cols_; ++j) {
+      temp.matrix_[i][j] = this->matrix_[i][j];
+    }
+  }
+  *this = std::move(temp);
+}
 
-void S21Matrix::EditCols(const int cols) {}
+void S21Matrix::EditCols(const int cols) {
+  if (cols < 0) throw std::invalid_argument("Invalid rows");
+  S21Matrix temp(this->rows_, cols);
+  int min_rows = (this->cols_ < cols) ? this->cols_ : cols;
+  for (int i = 0; i < min_rows; ++i) {
+    for (int j = 0; j < this->cols_; ++j) {
+      temp.matrix_[i][j] = this->matrix_[i][j];
+    }
+  }
+  *this = std::move(temp);
+}

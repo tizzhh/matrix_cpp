@@ -4,6 +4,7 @@
 #include <cmath>
 #include <iostream>
 #include <stdexcept>
+#include <utility>
 
 #define s21_ACCURACY 1e-7
 
@@ -40,7 +41,8 @@ class S21Matrix {
   S21Matrix operator*(const double &x) const noexcept;
   S21Matrix &operator*=(const double &x) noexcept;
   bool operator==(const S21Matrix &other) const;
-  double &operator()(const int &i, const int &j) const;
+  double &operator()(const int &i, const int &j);
+  const double &operator()(const int &i, const int &j) const;
 
   int GetRows() const noexcept;
   int GetCols() const noexcept;
