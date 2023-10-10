@@ -91,4 +91,158 @@ S21Matrix &S21Matrix::operator=(S21Matrix &&other) noexcept {
   return *this;
 }
 
-void S21Matrix::SumMatrix(const S21Matrix &other) {}
+bool S21Matrix::EqMatrix(const S21Matrix &other) const {
+  if (this->rows_ != other.rows_ || this->cols_ != other.cols_) return false;
+  bool is_equal = true;
+
+  for (int i = 0; i < this->rows_; ++i) {
+    for (int j = 0; j < this->cols_; ++j) {
+      if (std::fabs(this->matrix_[i][j] - other.matrix_[i][j] > ACCURACY)) {
+        is_equal = false;
+      }
+    }
+  }
+  return is_equal;
+}
+
+void S21Matrix::SumMatrix(const S21Matrix &other) {
+  if (this->rows_ != other.rows_ || this->cols_ != other.cols_) {
+    throw std::invalid_argument("Different matrix dimension");
+  }
+
+  for (int i = 0; i < this->rows_; ++i) {
+    for (int j = 0; j < this->cols_; ++j) {
+      this->matrix_[i][j] += other.matrix_[i][j];
+    }
+  }
+}
+
+void S21Matrix::SubMatrix(const S21Matrix &other) {
+  if (this->rows_ != other.rows_ || this->cols_ != other.cols_) {
+    throw std::invalid_argument("Different matrix dimension");
+  }
+
+  for (int i = 0; i < this->rows_; ++i) {
+    for (int j = 0; j < this->cols_; ++j) {
+      this->matrix_[i][j] -= other.matrix_[i][j];
+    }
+  }
+}
+
+void S21Matrix::MulNumber(const double num) {
+  for (int i = 0; i < this->rows_; ++i) {
+    for (int j = 0; j < this->cols_; ++j) {
+      this->matrix_[i][j] *= num;
+    }
+  }
+}
+
+void S21Matrix::MulMatrix(const S21Matrix &other) {
+  if (this->cols_ != other.rows_) {
+    throw std::invalid_argument(
+        "Matrixes cannot be multiplied due to dimension differences");
+  }
+
+  for (int i = 0; i < this->rows_; ++i) {
+    for (int j = 0; j < other.cols_; ++j) {
+      for (int k = 0; k < other.rows_; ++k) {
+        this->matrix_[i][j] += this->matrix_[i][k] * other.matrix_[k][j];
+      }
+    }
+  }
+}
+
+S21Matrix S21Matrix::Transpose() const {
+  S21Matrix transposed(this->cols_, this->rows_);
+
+  for (int i = 0; i < this->rows_; ++i) {
+    for (int j = 0; j < this->cols_; ++j) {
+      transposed.matrix_[j][i] = this->matrix_[i][j];
+    }
+  }
+
+  return transposed;
+}
+
+double S21Matrix::Determinant() const {
+  if (this->rows_ != this->cols_) {
+    throw std::invalid_argument("Matrix is not square");
+  }
+
+  double result = 1.0;
+  int swaps = 0, is_column_zero = 0;
+  S21Matrix temp(this->rows_, this->cols_);
+
+  for (int i = 0; i < temp.rows_ - 1 && !is_column_zero; ++i) {
+    if (std::fabs(temp.matrix_[i][i]) < ACCURACY) {
+      int j = i + 1;
+      for (; j < temp.rows_ && std::fabs(temp.matrix_[j][i]) < ACCURACY; ++j)
+        ;
+      if (j == temp.rows_) {
+        result = 0;
+        is_column_zero = 1;
+      }
+      ++swaps;
+      std::swap(temp.matrix_[i], temp.matrix_[j]);
+    }
+
+    for (int j = i + 1; j < temp.rows_ && !is_column_zero; ++j) {
+      double div = temp.matrix_[j][i] / temp.matrix_[i][i];
+      for (int k = 0; k < temp.rows_; ++k) {
+        temp.matrix_[j][k] -= div * temp.matrix_[i][k];
+      }
+    }
+  }
+
+  if (!is_column_zero) {
+    for (int i = 0; i < temp.rows_; ++i) {
+      result *= temp.matrix_[i][i];
+    }
+    if (swaps % 2 != 0) result *= -1;
+  }
+  return result;
+}
+
+S21Matrix S21Matrix::CalcComplements() const {
+  if (this->rows_ != this->cols_) {
+    throw std::invalid_argument("Matrix is not square");
+  }
+
+  S21Matrix complements(this->rows_, this->cols_);
+  S21Matrix minor(this->rows_ - 1, this->cols_ - 1);
+
+  for (int i = 0; i < this->rows_; ++i) {
+    for (int j = 0; j < this->cols_; ++j) {
+      minor.CreateMinor(*this, i, j);
+      double minor_res = minor.Determinant();
+      complements.matrix_[i][j] = minor_res * std::pow(-1, i + j);
+    }
+  }
+
+  return complements;
+}
+
+S21Matrix S21Matrix::InverseMatrix() const {
+  if (this->Determinant() == 0) {
+    throw std::invalid_argument("Determinant is 0");
+  }
+
+  S21Matrix complements = this->CalcComplements();
+  S21Matrix inverse = complements.Transpose();
+  inverse.MulNumber(1.0 / this->Determinant());
+  return inverse;
+}
+
+void S21Matrix::CreateMinor(const S21Matrix &other, const int i, const int j) {
+  int minorx = 0;
+  for (int x = 0; x < other.rows_; ++x) {
+    int minory = 0;
+    for (int y = 0; y < other.rows_; ++y) {
+      if (x != i && y != j) {
+        this->matrix_[minorx][minory] = other.matrix_[x][y];
+        ++minory;
+      }
+    }
+    if (x != i) ++minorx;
+  }
+}

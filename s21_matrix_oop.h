@@ -1,8 +1,11 @@
 #ifndef S21_MATRIX_OOP
 #define S21_MATRIX_OPP
 
+#include <cmath>
 #include <iostream>
 #include <stdexcept>
+
+#define ACCURACY 1e-7
 
 class S21Matrix {
  private:
@@ -44,6 +47,8 @@ class S21Matrix {
   int GetCols() const;
   void EditRows(const int rows);
   void EditCols(const int cols);
+
+  void CreateMinor(const S21Matrix &other, const int i, const int j);
 };
 
 #endif
