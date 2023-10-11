@@ -212,6 +212,12 @@ S21Matrix S21Matrix::CalcComplements() const {
     throw std::logic_error("Matrix is not square");
   }
 
+  if (this->rows_ == 1 && this->cols_ == 1) {
+    S21Matrix complements(1, 1);
+    complements(0, 0) = 1;
+    return complements;
+  }
+
   S21Matrix complements(this->rows_, this->cols_);
   S21Matrix minor(this->rows_ - 1, this->cols_ - 1);
 
@@ -343,9 +349,9 @@ void S21Matrix::EditRows(const int rows) {
 void S21Matrix::EditCols(const int cols) {
   if (cols < 0) throw std::invalid_argument("Invalid rows");
   S21Matrix temp(this->rows_, cols);
-  int min_rows = (this->cols_ < cols) ? this->cols_ : cols;
-  for (int i = 0; i < min_rows; ++i) {
-    for (int j = 0; j < this->cols_; ++j) {
+  int min_cols = (this->cols_ < cols) ? this->cols_ : cols;
+  for (int i = 0; i < this->rows_; ++i) {
+    for (int j = 0; j < min_cols; ++j) {
       temp.matrix_[i][j] = this->matrix_[i][j];
     }
   }
