@@ -52,7 +52,7 @@ class S21Matrix {
 
   void CreateMinor(const S21Matrix &other, const int i, const int j);
 
-  friend std::ostream &operator << (std::ostream &out, const S21Matrix &other);
+  friend std::ostream &operator<<(std::ostream &out, const S21Matrix &other);
 };
 
 #endif

@@ -1,9 +1,9 @@
 #include "s21_matrix_oop.h"
 
 S21Matrix::S21Matrix() : rows_(3), cols_(3) {
-  this->matrix_ = new double *[rows_];
+  this->matrix_ = new double *[rows_]();
   for (int i = 0; i < this->rows_; ++i) {
-    this->matrix_[i] = new double[cols_];
+    this->matrix_[i] = new double[cols_]();
   }
 }
 
@@ -20,9 +20,9 @@ S21Matrix::S21Matrix(int rows, int cols) : rows_(rows), cols_(cols) {
   if (this->rows_ < 1 || this->cols_ < 1) {
     throw std::invalid_argument("Invalid matrix dimensions");
   }
-  this->matrix_ = new double *[rows_];
+  this->matrix_ = new double *[rows_]();
   for (int i = 0; i < this->rows_; ++i) {
-    this->matrix_[i] = new double[cols_];
+    this->matrix_[i] = new double[cols_]();
   }
 }
 
@@ -31,9 +31,9 @@ S21Matrix::S21Matrix(const S21Matrix &other)
   if (other.matrix_ == nullptr) {
     this->matrix_ = nullptr;
   } else {
-    this->matrix_ = new double *[other.rows_];
+    this->matrix_ = new double *[other.rows_]();
     for (int i = 0; i < other.rows_; ++i) {
-      this->matrix_[i] = new double[other.cols_];
+      this->matrix_[i] = new double[other.cols_]();
       for (int j = 0; j < this->cols_; ++j) {
         this->matrix_[i][j] = other.matrix_[i][j];
       }
@@ -143,13 +143,15 @@ void S21Matrix::MulMatrix(const S21Matrix &other) {
         "Matrixes cannot be multiplied due to dimension differences");
   }
 
+  S21Matrix temp(this->rows_, other.cols_);
   for (int i = 0; i < this->rows_; ++i) {
     for (int j = 0; j < other.cols_; ++j) {
       for (int k = 0; k < other.rows_; ++k) {
-        this->matrix_[i][j] += this->matrix_[i][k] * other.matrix_[k][j];
+        temp.matrix_[i][j] += this->matrix_[i][k] * other.matrix_[k][j];
       }
     }
   }
+  *this = std::move(temp);
 }
 
 S21Matrix S21Matrix::Transpose() const {
@@ -350,10 +352,10 @@ void S21Matrix::EditCols(const int cols) {
   *this = std::move(temp);
 }
 
-std::ostream &operator << (std::ostream &out, const S21Matrix &other) {
+std::ostream &operator<<(std::ostream &out, const S21Matrix &other) {
   for (int i = 0; i < other.rows_; ++i) {
     for (int j = 0; j < other.cols_; ++j) {
-      out << other.matrix_[i][j] << " ";   
+      out << other.matrix_[i][j] << " ";
     }
     out << "\n";
   }
