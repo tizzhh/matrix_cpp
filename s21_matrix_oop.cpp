@@ -194,7 +194,7 @@ S21Matrix S21Matrix::CalcComplements() const {
     throw std::logic_error("Matrix is not square");
   }
 
-  if (this->rows_ == 1 && this->cols_ == 1) {
+  if (this->rows_ == 1) {
     S21Matrix complements(1, 1);
     complements(0, 0) = 1;
     return complements;
