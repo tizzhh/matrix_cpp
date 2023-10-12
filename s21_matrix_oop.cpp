@@ -179,10 +179,10 @@ double S21Matrix::Determinant() const {
   double result = 0;
   int sign = 1;
 
-  for (int i = 0; i < this->rows_; ++i) {
+  for (int j = 0; j < this->cols_; ++j) {
     S21Matrix minor(this->rows_ - 1, this->cols_ - 1);
-    minor.CreateMinor(*this, 0, i);
-    result += sign * this->matrix_[0][i] * minor.Determinant();
+    minor.CreateMinor(*this, 0, j);
+    result += sign * this->matrix_[0][j] * minor.Determinant();
     sign = -sign;
   }
 
