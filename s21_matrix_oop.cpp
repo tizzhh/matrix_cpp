@@ -155,7 +155,6 @@ void S21Matrix::MulMatrix(const S21Matrix &other) {
 }
 
 S21Matrix S21Matrix::Transpose() const {
-  if (this->matrix_ == nullptr) throw std::invalid_argument("Invalid matrix");
   S21Matrix transposed(this->cols_, this->rows_);
 
   for (int i = 0; i < this->rows_; ++i) {
@@ -293,16 +292,6 @@ bool S21Matrix::operator==(const S21Matrix &other) const {
 }
 
 double &S21Matrix::operator()(const int &i, const int &j) {
-  if (this->matrix_ == nullptr) {
-    throw std::invalid_argument("Invalid matrix");
-  }
-  if (i < 0 || i > this->rows_ || j < 0 || j > cols_) {
-    throw std::out_of_range("Index is outside the matrix");
-  }
-  return this->matrix_[i][j];
-}
-
-double S21Matrix::operator()(const int &i, const int &j) const {
   if (this->matrix_ == nullptr) {
     throw std::invalid_argument("Invalid matrix");
   }

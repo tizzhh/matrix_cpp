@@ -43,7 +43,6 @@ class S21Matrix {
   S21Matrix &operator*=(const double &x) noexcept;
   bool operator==(const S21Matrix &other) const;
   double &operator()(const int &i, const int &j);
-  double operator()(const int &i, const int &j) const;
 
   int GetRows() const noexcept;
   int GetCols() const noexcept;

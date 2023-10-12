@@ -19,6 +19,17 @@ TEST(ConstructorCopy, Test1Success) {
   ASSERT_TRUE(matrix_A == res);
 }
 
+TEST(ConstructorCopyInvalid, Test1Success) {
+  S21Matrix matrix_A(2, 2);
+  matrix_A(0, 0) = -69.420;
+  matrix_A(0, 1) = 15;
+  matrix_A(1, 0) = 25.005;
+  matrix_A(1, 1) = 13;
+  S21Matrix temp(std::move(matrix_A));
+  S21Matrix res(matrix_A);
+  ASSERT_ANY_THROW(matrix_A(0, 0));
+}
+
 TEST(ConstructorMove, Test1Success) {
   S21Matrix matrix_A(2, 2);
   matrix_A(0, 0) = -69.420;
@@ -48,6 +59,18 @@ TEST(OperatorCopy, Test1Success) {
 
   res = matrix_A;
   ASSERT_TRUE(matrix_A == res);
+}
+
+TEST(OperatorCopyInvalid, Test1Success) {
+  S21Matrix matrix_A(2, 2);
+  S21Matrix res(2, 2);
+  matrix_A(0, 0) = -69.420;
+  matrix_A(0, 1) = 15;
+  matrix_A(1, 0) = 25.005;
+  matrix_A(1, 1) = 13;
+  S21Matrix temp(std::move(matrix_A));
+  res = matrix_A;
+  ASSERT_ANY_THROW(matrix_A(0, 0));
 }
 
 TEST(OperatorMove, Test1Success) {
@@ -690,6 +713,8 @@ TEST(OperatorIndex, Test1Throw) {
   S21Matrix matrix_A(2, 2);
   ASSERT_ANY_THROW(matrix_A(-1, -1));
   ASSERT_ANY_THROW(matrix_A(69, 420));
+  S21Matrix temp(std::move(matrix_A));
+  ASSERT_ANY_THROW(matrix_A(0, 0));
 }
 
 TEST(OperatorIndex, Test2SuccessChange) {

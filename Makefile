@@ -22,18 +22,21 @@ s21_matrix_oop.a: s21_matrix_oop.o
 	ar -rcs $@ $^
 
 s21_matrix_oop.o: s21_matrix_oop.cpp
-	$(CXX) -c $(CXXFLAGS) $(COVERAGE_FLAGS) $^
+	$(CXX) -c $(CXXFLAGS) $^
 
 s21_tests_oop.o: s21_tests_oop.cpp
 	$(CXX) -c $(CXXFLAGS) $^
 
-gcov_report: test
+gcov_report: clean test_gcov
 	./test
 	lcov -c -d . -o coverage.info --no-external
 	lcov --remove coverage.info '/usr/*' --output-file coverage.info
 	genhtml coverage.info --output-directory gcov_report
 	open gcov_report/index.html
 
+test_gcov: libs21_matrix_oop.a s21_tests_oop.o
+	$(CXX) $(CXXFLAGS) $(COVERAGE_FLAGS) s21_matrix_oop.cpp s21_tests_oop.o $(LFLAGS) -L. -ls21_matrix_oop -o test
+	
 clean:
 	rm -rf *.o test gcov_report *.gcda *.gcno coverage.info *.a a.out
 
