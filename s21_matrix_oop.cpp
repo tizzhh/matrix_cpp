@@ -172,38 +172,20 @@ double S21Matrix::Determinant() const {
     throw std::logic_error("Matrix is not square");
   }
 
-  double result = 1.0;
-  int swaps = 0, is_column_zero = 0;
-  S21Matrix temp(*this);
-
-  for (int i = 0; i < temp.rows_ - 1 && !is_column_zero; ++i) {
-    if (std::fabs(temp.matrix_[i][i]) < s21_ACCURACY) {
-      int j = i + 1;
-      for (; j < temp.rows_ && std::fabs(temp.matrix_[j][i]) < s21_ACCURACY;
-           ++j) {
-      }
-      if (j == temp.rows_) {
-        result = 0;
-        is_column_zero = 1;
-      }
-      ++swaps;
-      std::swap(temp.matrix_[i], temp.matrix_[j]);
-    }
-
-    for (int j = i + 1; j < temp.rows_ && !is_column_zero; ++j) {
-      double div = temp.matrix_[j][i] / temp.matrix_[i][i];
-      for (int k = 0; k < temp.rows_; ++k) {
-        temp.matrix_[j][k] -= div * temp.matrix_[i][k];
-      }
-    }
+  if (this->rows_ == 1) {
+    return this->matrix_[0][0];
   }
 
-  if (!is_column_zero) {
-    for (int i = 0; i < temp.rows_; ++i) {
-      result *= temp.matrix_[i][i];
-    }
-    if (swaps % 2 != 0) result *= -1;
+  double result = 0;
+  int sign = 1;
+
+  for (int i = 0; i < this->rows_; ++i) {
+    S21Matrix minor(this->rows_ - 1, this->cols_ - 1);
+    minor.CreateMinor(*this, 0, i);
+    result += sign * this->matrix_[0][i] * minor.Determinant();
+    sign = -sign;
   }
+
   return result;
 }
 
