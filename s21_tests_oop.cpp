@@ -40,12 +40,13 @@ TEST(ConstructorMove, Test1Success) {
 
 TEST(OperatorCopy, Test1Success) {
   S21Matrix matrix_A(2, 2);
+  S21Matrix res(2, 2);
   matrix_A(0, 0) = -69.420;
   matrix_A(0, 1) = 15;
   matrix_A(1, 0) = 25.005;
   matrix_A(1, 1) = 13;
 
-  S21Matrix res = matrix_A;
+  res = matrix_A;
   ASSERT_TRUE(matrix_A == res);
 }
 
@@ -88,18 +89,34 @@ TEST(EqMatrix, Test2Eq) {
   ASSERT_TRUE(matrix_A.EqMatrix(matrix_B));
 }
 
-TEST(EqMatrix, Test3Sucess) {
+TEST(EqMatrix, Test3Eq) {
   S21Matrix matrix_A(2, 2);
   S21Matrix matrix_B(2, 2);
   matrix_A(0, 0) = -100;
   matrix_A(0, 1) = -100;
   matrix_A(1, 0) = -100;
   matrix_A(1, 1) = -100;
+
   matrix_B(0, 0) = -100;
   matrix_B(0, 1) = -100;
   matrix_B(1, 0) = -100;
   matrix_B(1, 1) = -100;
   ASSERT_TRUE(matrix_A.EqMatrix(matrix_B));
+}
+
+TEST(EqMatrix, Test4NotEq) {
+  S21Matrix matrix_A(2, 2);
+  S21Matrix matrix_B(2, 2);
+  matrix_A(0, 0) = -100;
+  matrix_A(0, 1) = -100;
+  matrix_A(1, 0) = -100;
+  matrix_A(1, 1) = -100;
+
+  matrix_B(0, 0) = -100;
+  matrix_B(0, 1) = -100;
+  matrix_B(1, 0) = -100;
+  matrix_B(1, 1) = 100;
+  ASSERT_FALSE(matrix_A.EqMatrix(matrix_B));
 }
 
 TEST(SumMatrix, Test1Throw) {

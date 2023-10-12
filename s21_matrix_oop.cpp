@@ -194,7 +194,7 @@ S21Matrix S21Matrix::CalcComplements() const {
     throw std::logic_error("Matrix is not square");
   }
 
-  if (this->rows_ == 1) {
+  if (this->rows_ == 1 && this->cols_ == 1) {
     S21Matrix complements(1, 1);
     complements(0, 0) = 1;
     return complements;
@@ -302,7 +302,7 @@ double &S21Matrix::operator()(const int &i, const int &j) {
   return this->matrix_[i][j];
 }
 
-const double &S21Matrix::operator()(const int &i, const int &j) const {
+double S21Matrix::operator()(const int &i, const int &j) const {
   if (this->matrix_ == nullptr) {
     throw std::invalid_argument("Invalid matrix");
   }
@@ -338,14 +338,4 @@ void S21Matrix::EditCols(const int cols) {
     }
   }
   *this = std::move(temp);
-}
-
-std::ostream &operator<<(std::ostream &out, const S21Matrix &other) {
-  for (int i = 0; i < other.rows_; ++i) {
-    for (int j = 0; j < other.cols_; ++j) {
-      out << other.matrix_[i][j] << " ";
-    }
-    out << "\n";
-  }
-  return out;
 }

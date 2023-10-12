@@ -1,8 +1,9 @@
 CXX = g++
 CXXFLAGS = -Wall -Werror -Wextra -std=c++17
-LFLAGS = -lgtest -lgtest_main -lpthread
+COVERAGE_FLAGS = -fprofile-arcs -ftest-coverage
+LFLAGS = -lgtest -lgtest_main -fprofile-arcs
 
-.PHONY: clean all rebuild
+.PHONY: clean all rebuild test gcov_report
 
 ifeq ($(shell uname), Linux)
 LFLAGS += -lpthread -lsubunit -lm
@@ -14,16 +15,6 @@ test: libs21_matrix_oop.a s21_tests_oop.o
 	$(CXX) s21_tests_oop.o $(LFLAGS) -L. -ls21_matrix_oop -o $@
 	./test
 
-gcov_report: clean add_gcov_flags test
-	./test
-	lcov --capture --directory . --output-file coverage.info
-	genhtml coverage.info --output-directory gcov_report
-	open gcov_report/index.html
-
-add_gcov_flags:
-	$(eval CXXFLAGS += --coverage)
-	$(eval LFLAGS += -lgcov)
-
 libs21_matrix_oop.a: s21_matrix_oop.a
 	mv $^ $@
 
@@ -31,10 +22,17 @@ s21_matrix_oop.a: s21_matrix_oop.o
 	ar -rcs $@ $^
 
 s21_matrix_oop.o: s21_matrix_oop.cpp
-	$(CXX) -c $(CXXFLAGS) $^
+	$(CXX) -c $(CXXFLAGS) $(COVERAGE_FLAGS) $^
 
 s21_tests_oop.o: s21_tests_oop.cpp
 	$(CXX) -c $(CXXFLAGS) $^
+
+gcov_report: test
+	./test
+	lcov -c -d . -o coverage.info --no-external
+	lcov --remove coverage.info '/usr/*' --output-file coverage.info
+	genhtml coverage.info --output-directory gcov_report
+	open gcov_report/index.html
 
 clean:
 	rm -rf *.o test gcov_report *.gcda *.gcno coverage.info *.a a.out

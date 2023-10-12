@@ -43,7 +43,7 @@ class S21Matrix {
   S21Matrix &operator*=(const double &x) noexcept;
   bool operator==(const S21Matrix &other) const;
   double &operator()(const int &i, const int &j);
-  const double &operator()(const int &i, const int &j) const;
+  double operator()(const int &i, const int &j) const;
 
   int GetRows() const noexcept;
   int GetCols() const noexcept;
@@ -51,8 +51,6 @@ class S21Matrix {
   void EditCols(const int cols);
 
   void CreateMinor(const S21Matrix &other, const int i, const int j);
-
-  friend std::ostream &operator<<(std::ostream &out, const S21Matrix &other);
 };
 
 #endif
