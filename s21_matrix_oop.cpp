@@ -91,7 +91,7 @@ S21Matrix &S21Matrix::operator=(S21Matrix &&other) noexcept {
   return *this;
 }
 
-bool S21Matrix::EqMatrix(const S21Matrix &other) const {
+bool S21Matrix::EqMatrix(const S21Matrix &other) const noexcept {
   if (this->rows_ != other.rows_ || this->cols_ != other.cols_) return false;
   bool is_equal = true;
 
@@ -287,7 +287,7 @@ S21Matrix &S21Matrix::operator*=(const double &x) noexcept {
   return *this;
 }
 
-bool S21Matrix::operator==(const S21Matrix &other) const {
+bool S21Matrix::operator==(const S21Matrix &other) const noexcept {
   return this->EqMatrix(other);
 }
 
